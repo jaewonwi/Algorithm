@@ -3,16 +3,15 @@ import java.io.InputStreamReader;
 
 public class Main {
     static int N, ans = 0;
-    static int[] tgt;
-    static boolean[] select;
+    static int[][] map;
+    static int[] select;
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
 
-        tgt = new int[N];
-        select = new boolean[N];
-
+        map = new int[N][N];
+        select = new int[N];
         nQueen(0);
 
         System.out.println(ans);
@@ -25,19 +24,17 @@ public class Main {
         }
 
         for (int i = 0; i < N; i++){
-            tgt[tgtIdx] = i;
-
-            if (check(tgtIdx)){
-                nQueen(tgtIdx + 1);
+            select[tgtIdx] = i;
+            if (promising(tgtIdx)){
+                nQueen(tgtIdx+1);
             }
         }
     }
 
-    static boolean check(int tgtIdx){
+    static boolean promising(int tgtIdx){
         for (int i = 0; i < tgtIdx; i++){
-            if (tgt[i] == tgt[tgtIdx] || (tgtIdx - i) == Math.abs(tgt[i] - tgt[tgtIdx])){
+            if (select[i] == select[tgtIdx] || tgtIdx - i == Math.abs(select[tgtIdx] - select[i]))
                 return false;
-            }
         }
         return true;
     }
