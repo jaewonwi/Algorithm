@@ -1,10 +1,10 @@
 # [level 0] 더 크게 합치기 - 181939 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181939) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181939#) 
 
 ### 성능 요약
 
-메모리: 75.5 MB, 시간: 0.14 ms
+메모리: 72.7 MB, 시간: 0.13 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2024년 10월 13일 20:07:07
+2024년 10월 13일 20:10:35
 
 ### 문제 설명
 
