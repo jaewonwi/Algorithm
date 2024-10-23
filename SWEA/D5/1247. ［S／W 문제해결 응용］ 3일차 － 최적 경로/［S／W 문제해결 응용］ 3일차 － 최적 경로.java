@@ -33,7 +33,7 @@ public class Solution {
             }
 
             answer = Integer.MAX_VALUE;
-            perm(0);
+            perm(0, 0);
 
             sb.append(answer).append("\n");
         }
@@ -41,16 +41,16 @@ public class Solution {
         System.out.println(sb);
     }
 
-    static void perm(int tgtIdx){
+    static void perm(int tgtIdx, int sum){
         if (tgtIdx == N){
             // complete code
-            int sum = distance(company, customer.get(tgt[0]));
-            for (int i = 0; i < N-1; i++){
-                sum += distance(customer.get(tgt[i]), customer.get(tgt[i+1]));
-            }
+//            int sum = distance(company, customer.get(tgt[0]));
+//            for (int i = 0; i < N-1; i++){
+//                sum += distance(customer.get(tgt[i]), customer.get(tgt[i+1]));
+//            }
+
             sum += distance(customer.get(tgt[N-1]), home);
             answer = Math.min(answer, sum);
-
             return;
         }
 
@@ -58,9 +58,19 @@ public class Solution {
             if (select[i]) continue;
 
             tgt[tgtIdx] = i;
-            select[i] = true;
-            perm(tgtIdx+1);
-            select[i] = false;
+
+            int d = 0;
+            if (tgtIdx == 0){
+                d = distance(company, customer.get(tgt[0]));
+            } else {
+                d = distance(customer.get(tgt[tgtIdx-1]), customer.get(tgt[tgtIdx]));
+            }
+
+            if (sum + d < answer){
+                select[i] = true;
+                perm(tgtIdx+1,sum + d);
+                select[i] = false;
+            }
         }
     }
 
