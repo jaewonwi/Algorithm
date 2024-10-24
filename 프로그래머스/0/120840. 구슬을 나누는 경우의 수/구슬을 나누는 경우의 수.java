@@ -1,23 +1,14 @@
 class Solution {
-    static int b, s, answer = 0;
-    public int solution(int balls, int share) {
-        b = balls;
-        s = share;
+    public long solution(int balls, int share) {
+        long answer = 1;
         
-        comb(0, 0);
+        if (share > balls/2) share = balls - share;
         
-        return answer;
-    }
-    
-    static void comb(int idx, int cnt){
-        if (cnt == s){
-            answer++;
-            return;
+        for (int i = 0; i < share; i++){
+            answer *= balls-i;
+            answer /= i+1;
         }
         
-        if (idx == b) return;
-        
-        comb(idx+1, cnt+1);
-        comb(idx+1, cnt);
+        return (int) answer;
     }
 }
