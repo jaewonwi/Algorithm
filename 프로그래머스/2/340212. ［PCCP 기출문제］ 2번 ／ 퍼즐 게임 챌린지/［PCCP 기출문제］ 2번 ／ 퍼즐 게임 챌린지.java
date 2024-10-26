@@ -1,30 +1,22 @@
 import java.util.*;
 class Solution {
     public int solution(int[] diffs, int[] times, long limit) {
-        int minVal = 1;
-        int maxVal = Arrays.stream(diffs).max().getAsInt();
-        int level = (minVal + maxVal)/2;
+        int start = 1;
+        int end = Arrays.stream(diffs).max().getAsInt();
         
-        while (minVal <= maxVal){
+        while (start < end){
+            int level = (start + end) / 2;
             long time = cal(diffs, times, level);
             
-            if (limit == time){
-                return level;
-            } else if (limit > time){
-                long nextTime = level == 1? limit+1 : cal(diffs, times, level-1);
-                if (limit < nextTime){
-                    return level;
-                } else {
-                    maxVal = level - 1;
-                }
+            if (limit >= time){
+                end = level;
             } else {
-                minVal = level + 1;
+                start = level + 1;
             }
-            
-            level = (minVal + maxVal)/2;
         }
         
-        return -1;
+        return end;
+            
     }
     
     private long cal(int[] diffs, int[] times, int level){
