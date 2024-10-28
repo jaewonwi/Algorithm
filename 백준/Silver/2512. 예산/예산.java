@@ -29,7 +29,8 @@ public class Main {
             }
         }
 
-        System.out.println(left-1);
+
+        System.out.println(right);
 
     }
 
