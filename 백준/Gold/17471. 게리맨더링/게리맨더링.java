@@ -36,9 +36,7 @@ public class Main {
         select = new boolean[N];
         visit = new boolean[N];
 
-        for (int n = 1; n <= N/2; n++){     // 한 구역의 크기가 1 ~ N/2 인 경우를 고려. (~N까지 할 필요가 없음)
-            comb(0, 0, n);
-        }
+        subset(0);
 
         System.out.println(ans == Integer.MAX_VALUE ? -1 : ans);
     }
@@ -57,8 +55,7 @@ public class Main {
 
     static int bfs(int start, boolean flag){  // 연결 체크
         Queue<Integer> queue = new ArrayDeque<>();
-        Arrays.fill(visit, false);
-        queue.add(start);
+        queue.offer(start);
         visit[start] = true;
 
         int cnt = 0;
@@ -78,11 +75,10 @@ public class Main {
         return cnt;
     }
 
-    static void comb(int srcIdx, int cnt, int tot){
-        // 종료조건
-        // 선택 -> A 구역 / 비선택 -> B 구역
-        if (cnt == tot) {
-            // 연결 체크
+    static void subset(int srcIdx){
+        if (srcIdx == N){
+            Arrays.fill(visit, false);
+
             int connA = 0, connB = 0;
             for (int i = 0; i < N; i++){
                 if (select[i]){
@@ -104,12 +100,9 @@ public class Main {
             return;
         }
 
-        if (srcIdx == N) return;
-
         select[srcIdx] = true;
-        comb(srcIdx+1, cnt+1, tot);
+        subset(srcIdx+1);
         select[srcIdx] = false;
-        comb(srcIdx+1, cnt, tot);
+        subset(srcIdx+1);
     }
-
 }
