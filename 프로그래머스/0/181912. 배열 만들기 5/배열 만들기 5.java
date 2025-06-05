@@ -9,7 +9,6 @@ class Solution {
                 list.add(Integer.parseInt(cut));
         }
         
-        
         return list.stream().mapToInt(i -> i).toArray();
     }
 }
