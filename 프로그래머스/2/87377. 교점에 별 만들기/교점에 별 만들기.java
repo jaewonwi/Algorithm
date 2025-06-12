@@ -58,18 +58,18 @@ class Solution {
     }
     
     public Point intersection(int[][] line, int i, int j){
-        int a1 = line[i][0];
-        int b1 = line[i][1];
-        int c1 = line[i][2];
-        int a2 = line[j][0];
-        int b2 = line[j][1];
-        int c2 = line[j][2];
+        long a1 = line[i][0];
+        long b1 = line[i][1];
+        long c1 = line[i][2];
+        long a2 = line[j][0];
+        long b2 = line[j][1];
+        long c2 = line[j][2];
         
         long denomiator = a1 * b2 - b1 * a2;
         if (denomiator == 0) return null; 
         
-        double x = (double) ((long)b1 * c2 - c1 * b2) / denomiator;   // double로 변환해서 계산해야 값 손실이 발생하지 않는다.
-        double y = (double) ((long)c1 * a2 - a1 * c2) / denomiator;
+        double x = (double) (b1 * c2 - c1 * b2) / denomiator;   // double로 변환해서 계산해야 값 손실이 발생하지 않는다.
+        double y = (double) (c1 * a2 - a1 * c2) / denomiator;
         
         if (x % 1 != 0 || y % 1 != 0) return null;  // 정수가 아닐 경우 null 반환
         
