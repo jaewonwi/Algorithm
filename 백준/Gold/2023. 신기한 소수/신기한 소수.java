@@ -3,48 +3,35 @@ import java.util.*;
 
 public class Main {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static StringTokenizer st;
     static StringBuilder sb = new StringBuilder();
-    static int N;
-    static int[] number;
-    // static boolean[] primes;
-
-    // 소수 판별식 = 에라토스테네스의 체
+	static int N;
+	static boolean[] nums;
     public static void main(String[] args) throws Exception{
-        N = Integer.parseInt(br.readLine());
-        number = new int[N];
+		N = Integer.parseInt(br.readLine());
+		backtrack(0,0);
 
-        int size = (int) Math.pow(10, N);
-        // primes = new boolean[size+1];
-        // Arrays.fill(primes,true);
-
-        for (int i = 2; i < 9; i++){
-            if (!isPrime(i)) continue;
-
-            backtracking(String.valueOf(i));    // 가장 왼쪽을 i로 시작해서, N 자리까지 만들면서 소수인지 백트래킹
-        }
-
-        System.out.print(sb);
+		System.out.println(sb);
     }
 
-    static void backtracking(String num){
-        if (num.length() == N){
-            sb.append(num).append("\n");
-            return;
-        }
+	static void backtrack(int n, int cnt){
+		if (cnt == N){
+			sb.append(n).append("\n");
+			return;
+		}
 
-        for (int i = 0; i <= 9; i++){
-            String nextNum = num + Integer.toString(i);
-            if (isPrime(Integer.valueOf(nextNum)))      // 매번 소수인지 체크
-                backtracking(nextNum);
-        }
-    }
+		for (int i = 0; i <= 9; i++){
+			int nn = n * 10 + i;
+			if (isPrime(nn))
+				backtrack(nn, cnt+1);
+		}
+	}
 
-    static boolean isPrime(int n){
-        for (int i = 2; i <= Math.sqrt(n); i++){
-            if (n % i == 0)     // n의 제곱근 보다 작은 어떤 수로 나누어 떨어지면 -> 소수 X
-                return false;
-        }
-        return true;
-    }
+	static boolean isPrime(int n){
+		if (n == 1 || n == 0) return false;
+		for (int i = 2; i <= Math.sqrt(n); i++){
+			if (n % i == 0) return false;
+		}
+
+		return true;
+	}
 }
