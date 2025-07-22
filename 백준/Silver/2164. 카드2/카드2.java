@@ -1,30 +1,23 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.ArrayDeque;
-import java.util.Queue;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 public class Main {
-	static int N;
-	static Queue<Integer> queue = new ArrayDeque<>();
-	
-	public static void main(String[] args) throws Exception {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		
-		N = Integer.parseInt(br.readLine()); 
-		for (int i = 1; i <= N; i++) {
-			queue.offer(i); 
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	static int N;	// 1~N번 카드 쌓여있음. (맨위가 1)
+    public static void main(String[] args) throws Exception{
+		N = Integer.parseInt(br.readLine());
+		Queue<Integer> q = new ArrayDeque<>();
+		for (int i = 1; i <= N; i++){
+			q.offer(i);
 		}
 
-		while ( queue.size() > 1 ) {
-			queue.poll();
-			
-			queue.offer(queue.poll());
-			
-			
+		while (q.size() != 1){
+			int n = q.poll();
+			if (q.size() == 1) break;
+
+			n = q.poll();
+			q.offer(n);
 		}
-			System.out.println(queue.poll());
-		
-		
-	}
+		System.out.println(q.poll());
+    }
 }
