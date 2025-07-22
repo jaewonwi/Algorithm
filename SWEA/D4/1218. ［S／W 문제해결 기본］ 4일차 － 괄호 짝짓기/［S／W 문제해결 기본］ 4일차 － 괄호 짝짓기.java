@@ -21,7 +21,7 @@ public class Solution {
 			}
 
 			stack.clear();
-			boolean flag = true;
+			int ans = 1;
 			for (int i = 0; i < len; i++){
 				char c = str.charAt(i);
 				if (isFront(c))
@@ -29,8 +29,7 @@ public class Solution {
 				else {
 					char out = stack.peek();
 					if (!check(out, c)){	// 짝이 맞지않을 경우 - 유요하지 X
-						sb.append("0").append("\n");
-						flag = false;
+						ans = 0;
 						break;
 					} else {	// 짝이 맞을 경우 - 계속 탐색
 						stack.pop();
@@ -38,9 +37,10 @@ public class Solution {
 				}
 			}
 
-			if (stack.isEmpty()){
-				sb.append("1").append("\n");
-			} 
+			if (!stack.isEmpty()){
+				ans = 0;
+			}
+			sb.append(ans).append("\n");
 		}
 
 		System.out.println(sb);
