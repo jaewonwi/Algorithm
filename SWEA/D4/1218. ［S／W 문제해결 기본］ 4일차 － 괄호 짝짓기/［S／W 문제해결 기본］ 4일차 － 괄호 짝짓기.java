@@ -1,54 +1,64 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.io.*;
+import java.util.*;
 
 public class Solution {
-    // (), [], {}, <>
-    // 1 - 유효, 0 - 무효
-    // (<)> 이런 경우는 없다. 항상 테스트케이스는 (<>) 이런 식으로 나옴. => 스택 사용하기
-    static int len, answer;
-    static char[] origin;
-    static Deque<Character> stack = new ArrayDeque<>();
-    
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringTokenizer st;
+    static StringBuilder sb = new StringBuilder();
 
-        for (int tc = 1; tc <= 10; tc++){
-            len = Integer.parseInt(br.readLine());
-            origin = br.readLine().toCharArray();
+	// '()', '[]', '{}', '<>'
+	static char[] front = {'(','[','{','<'}, end = {')',']','}','>'};
+    public static void main(String[] args) throws Exception{
+		Stack<Character> stack = new Stack<>();
+		for (int tc = 1; tc <= 10; tc++){
+			sb.append("#").append(tc).append(" ");
+			int len = Integer.parseInt(br.readLine());
+			String str = br.readLine();
 
-            stack.clear();
-            answer = 0;
+			if (len % 2 != 0) {
+				sb.append("0").append("\n");
+				continue;
+			}
 
-            if (len % 2 != 0) {
-                sb.append("#").append(tc).append(" ").append(answer).append("\n");
-                continue;
-            }
+			stack.clear();
+			boolean flag = true;
+			for (int i = 0; i < len; i++){
+				char c = str.charAt(i);
+				if (isFront(c))
+					stack.push(c);
+				else {
+					char out = stack.peek();
+					if (!check(out, c)){	// 짝이 맞지않을 경우 - 유요하지 X
+						sb.append("0").append("\n");
+						flag = false;
+						break;
+					} else {	// 짝이 맞을 경우 - 계속 탐색
+						stack.pop();
+					}
+				}
+			}
 
-            for (int i = 0; i < len; i++){
-                char token = origin[i];
-                if (token == '(' || token == '[' || token == '{' || token == '<') {
-                    stack.push(token);
-                } else {
-                    if (stack.isEmpty()){
-                        stack.push(token);
-                        break;
-                    }
+			if (stack.isEmpty()){
+				sb.append("1").append("\n");
+			} 
+		}
 
-                    char prev = stack.peek();
-                    if (token == '>' && prev != '<') break;         // 매칭이 안되면 꺼내지 않고 break;
-                    else if (token == ')' && prev != '(') break;
-                    else if (token == ']' && prev != '[') break;
-                    else if (token == '}' && prev != '{') break;
-                    else stack.pop();   // 매칭되면 꺼내기
-                }
-            }
-
-            if (stack.isEmpty()) answer = 1;
-            sb.append("#").append(tc).append(" ").append(answer).append("\n");
-        }
-        System.out.println(sb);
+		System.out.println(sb);
     }
+
+	static boolean isFront(char c){
+		for (int i = 0; i < 4; i++){
+			if (c == front[i]) return true;
+		}
+		return false;
+	}
+
+	static boolean check(char out, char c){
+		for (int i = 0; i < 4; i++){
+			if (out == front[i] && c == end[i]){
+				return true;
+			}
+		}
+		return false;
+	}
 }
