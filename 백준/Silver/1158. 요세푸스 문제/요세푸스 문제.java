@@ -1,46 +1,38 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.ArrayDeque;
-import java.util.Queue;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 public class Main {
-    static int N, K;    // 1 <= K <= N <= 5,000
+	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	static StringTokenizer st;
+	static StringBuilder sb = new StringBuilder();
+	static int N, K;
+	public static void main(String[] args) throws Exception {
+		st = new StringTokenizer(br.readLine());
+		N = Integer.parseInt(st.nextToken());
+		K = Integer.parseInt(st.nextToken());
 
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        StringBuffer sb = new StringBuffer();
+		Queue<Integer> q = new ArrayDeque<>();
+		for (int i = 1; i <= N; i++){
+			q.offer(i);
+		}
+		sb.append("<");
 
-        N = Integer.parseInt(st.nextToken());
-        K = Integer.parseInt(st.nextToken());
-
-        sb.append("<");
-
-        // 요세푸스 순열 구하기
-        Queue<Integer> queue = new ArrayDeque<>();
-        for (int i = 1; i <= N; i++){
-            queue.offer(i);
-        }
-
-        int idx = 1;
-        for (int i = 1; i < K; i++){
-            queue.offer(queue.poll());
-        }
-        sb.append(queue.poll());
-
-        while (!queue.isEmpty()){
-            if (idx % K == 0){
-                idx = 1;
-                sb.append(", ").append(queue.poll());
-                continue;
-            }
-
-            queue.offer(queue.poll());
-            idx++;
-        }
-
-        sb.append(">");
-        System.out.println(sb);
-    }
+		int tot = 0;
+		int cnt = 0;
+		while (!q.isEmpty()){
+			cnt++;
+			if (cnt == K){
+				sb.append(q.poll()).append(", ");
+				cnt = 0;
+			} else {
+				int n = q.poll();
+				q.offer(n);
+			}
+		}
+		int len = sb.length();
+		sb.deleteCharAt(len-1);
+		sb.deleteCharAt(len-2);
+		sb.append(">");
+		System.out.println(sb);
+	}
 }
