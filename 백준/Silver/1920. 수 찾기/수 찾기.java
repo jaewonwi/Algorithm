@@ -1,4 +1,3 @@
-
 import java.io.*;
 import java.util.*;
 
@@ -6,41 +5,26 @@ public class Main {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static StringTokenizer st;
     static StringBuilder sb = new StringBuilder();
-
-    public static void main(String[] args) throws Exception{
-        int N = Integer.parseInt(br.readLine());
-        int[] A = new int[N];
-
-        st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < N; i++){
-            A[i] = Integer.parseInt(st.nextToken());
-        }
-        Arrays.sort(A);
-
-        int M = Integer.parseInt(br.readLine());
-        st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < M; i++){
-            int num = Integer.parseInt(st.nextToken());
-
-            int left = 0;
-            int right = N-1;
-            boolean flag = false;
-            while (left <= right){
-                int mid = (left + right) / 2;
-
-                if (A[mid] == num){
-                    flag = true;
-                    break;
-                } else if (A[mid] < num) {
-                    left = mid+1;
-                } else {
-                    right = mid-1;
-                }
-            }
-
-            if (flag) System.out.println(1);
-            else System.out.println(0);
-        }
-
+    static int N, M, X;
+	static int[] arr;
+	public static void main(String[] args) throws Exception{
+    	N = Integer.parseInt(br.readLine());
+		arr = new int[N];
+		HashSet<Integer> set = new HashSet<>();
+		st = new StringTokenizer(br.readLine());
+		for (int i = 0; i < N; i++){
+			// arr[i] = Integer.parseInt(st.nextToken());
+			set.add(Integer.parseInt(st.nextToken()));
+		}
+		M = Integer.parseInt(br.readLine());
+		st = new StringTokenizer(br.readLine());
+		for (int i = 0; i < M; i++){
+			X = Integer.parseInt(st.nextToken());
+			if (set.contains(X))
+				sb.append("1\n");
+			else
+				sb.append("0\n");
+		}
+		System.out.println(sb);
     }
 }
