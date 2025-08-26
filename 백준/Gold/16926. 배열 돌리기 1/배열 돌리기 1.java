@@ -1,103 +1,68 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 public class Main {
-    static int N, M, R;
-    static int[][] map;
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringTokenizer st;
+    static StringBuilder sb = new StringBuilder();
+	static int N, M, R;
+	static int[][] arr;
+    public static void main(String[] args) throws Exception{
+		st = new StringTokenizer(br.readLine());
+		N = Integer.parseInt(st.nextToken());	// 세로
+		M = Integer.parseInt(st.nextToken());	// 가로
+		R = Integer.parseInt(st.nextToken());
 
-    // <-  ^  ->  v
-    static int[] dy = {0, -1, 0, 1};
-    static int[] dx = {-1, 0, 1, 0};
+		arr = new int[N][M];
+		for (int i = 0; i < N; i++){
+			st = new StringTokenizer(br.readLine());
+			for (int j = 0; j < M; j++){
+				arr[i][j] = Integer.parseInt(st.nextToken());
+			}
+		}
 
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        StringBuilder sb = new StringBuilder();
+		int idx = Math.min(N, M) / 2;
+		for (int i = 0; i < idx; i++){
+			int r = (N-1-i-i)*2 + (M-1-i-i)*2;
+			rotate(i,N-1-i, i, M-1-i, R % r);
+		}
 
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
-        R = Integer.parseInt(st.nextToken());
-
-        map = new int[N][M];
-        for (int i = 0; i < N; i++){
-            st = new StringTokenizer(br.readLine().trim());
-            for (int j = 0; j < M; j++){
-                map[i][j] = Integer.parseInt(st.nextToken());
-            }
-        }
-
-        for (int i = 0; i < R; i++)
-            rotation(map);
-
-        for (int i = 0; i < N; i++){
-            for (int j = 0; j < M; j++){
-                sb.append(map[i][j]).append(" ");
-            }
-            sb.append("\n");
-        }
-
-        System.out.println(sb);
+		print();
+		System.out.println(sb);
     }
 
-    static void rotation(int[][] map){
-        int count = Math.min(N, M) / 2; // 회전 시켜야하는 횟수
-        // 배열을 돌릴 때 뒤에서부터 회전시키면 코너에 있는 숫자를 안전하게 옮길 수 있다!
+	// 회전
+	static void rotate(int u, int d, int l, int r, int cnt){
+		while (cnt > 0){
+			int temp = arr[u][l];
+			// 위
+			for (int idx = 0; idx < r-l; idx++){
+				arr[u][l+idx] = arr[u][l+idx+1];
+			}
+			// 오른쪽
+			for (int idx = 0; idx < d-u; idx++){
+				arr[u+idx][r] = arr[u+idx+1][r];
+			}
+			// 아래
+			for (int idx = 0; idx < r-l; idx++){
+				arr[d][r-idx] = arr[d][r-idx-1];
+			}
+			// 오른쪽
+			for (int idx = 0; idx < d-u; idx++){
+				arr[d-idx][l] = arr[d-idx-1][l];
+			}
+			arr[u+1][l] = temp;
+			cnt--;
+		}
+	}
 
-        int idx = 0;
-        while (count > idx){
-            int temp = map[idx][idx];
-
-            moveHorizon(map, idx, 0);
-            moveVertical(map, idx, 1);
-            moveHorizon(map, idx, 2);
-            moveVertical(map, idx, 3);
-
-            map[idx+1][idx] = temp;
-
-            idx++;
-        }
-
-    }
-
-    static void moveHorizon(int[][] map, int idx, int dir){
-        if (dir == 0) {   // <-
-            int sx = idx;
-            int ex = M - idx - 1;
-
-            while (sx < ex) {
-                map[idx][sx] = map[idx][sx+1];
-                sx++;
-            }
-        } else if (dir == 2) {  // ->
-            int sx = M - idx - 1;
-            int ex = idx;
-
-            while (sx > ex) {
-                map[N-idx-1][sx] = map[N-idx-1][sx-1];
-                sx--;
-            }
-        }
-    }
-
-    static void moveVertical(int[][] map, int idx, int dir){
-        if (dir == 1) {   // ^
-            int sy = idx;
-            int ey = N - idx - 1;
-
-            while (sy < ey) {
-                map[sy][M-idx-1] = map[sy+1][M-idx-1];
-                sy++;
-            }
-        } else if (dir == 3) {  // v
-            int sy = N - idx - 1;
-            int ey = idx;
-
-            while (sy > ey) {
-                map[sy][idx] = map[sy-1][idx];
-                sy--;
-            }
-        }
-    }
-
+	// 출력
+	static void print(){
+		for (int i = 0; i < N; i++){
+			for (int j = 0; j < M; j++){
+				sb.append(arr[i][j]).append(" ");
+			}
+			sb.append("\n");
+		}
+	}
 }
