@@ -1,76 +1,84 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 public class Solution {
-    static int T, N, ans, max;   // N*N
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringTokenizer st;
+    static StringBuilder sb = new StringBuilder();
+    static int T, N, ans, an;
     static int[][] map;
-    static int[] dy = {-1,1,0,0};   // 상하좌우
-    static int[] dx = {0,0,-1,1};
-
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        StringBuffer sb = new StringBuffer();
-
-        T = Integer.parseInt(st.nextToken());
-        for (int test_case = 1; test_case <= T; test_case++){
+    public static void main(String[] args) throws Exception{
+    	// 상하좌우 이동가능, 현재방보다 정확히 1 클때!
+        // 어떻게 가장 많은 개수의 방을 이동할 수 있을까?
+        T = Integer.parseInt(br.readLine());
+        for (int t = 1; t <= T; t++){
+            sb.append("#").append(t).append(" ");
             N = Integer.parseInt(br.readLine());
             map = new int[N][N];
-
-            for (int i=0; i<N; i++){
+            for (int i = 0; i < N; i++){
                 st = new StringTokenizer(br.readLine());
-                for (int j=0; j<N; j++){
+                for (int j = 0; j < N; j++){
                     map[i][j] = Integer.parseInt(st.nextToken());
                 }
             }
 
-            // 맵 탐색 -> 정답 갱신
-            ans = Integer.MAX_VALUE;
-            max = 0;
+            ans = 1;
+            an = N*N;
             for (int i = 0; i < N; i++){
                 for (int j = 0; j < N; j++){
-                    int cnt = search(i, j);
-
-                    if (cnt > max){
-                        max = cnt;
-                        ans = map[i][j];
-                    } else if (cnt == max){
-                        ans = Math.min(ans, map[i][j]);
+                    int result = find(i,j);
+                    if (result == ans) {
+                        an = Math.min(an, map[i][j]);
+                    } else if (result > ans){
+                        ans = result;
+                        an = map[i][j];
                     }
-
                 }
             }
 
-            sb.append("#").append(test_case).append(" ").append(ans).append(" ").append(max).append("\n");
+            sb.append(an).append(" ").append(ans).append(" ").append("\n");
         }
-
         System.out.println(sb);
     }
 
-    static int search(int sy, int sx){
-        int cnt = 1;
-        boolean flag = true;
+    static int[] dy = {-1,1,0,0}, dx = {0,0,-1,1};
+    static int find(int y, int x){
+        Queue<Pos> q = new ArrayDeque<>();
+        q.offer(new Pos(y,x,1,N*N));
+        int result = 1;
 
-        while (flag) {
-            int y = sy;
-            int x = sx;
-            for (int d = 0; d < 4; d++) {
-                int ny = sy + dy[d];
-                int nx = sx + dx[d];
+        while (!q.isEmpty()){
+            Pos cur = q.poll();
+            if (result <= cur.cnt) result = cur.cnt;
 
-                if (ny >= 0 && ny < N && nx >= 0 && nx < N && map[ny][nx] == map[sy][sx] + 1) {
-                    sy = ny;
-                    sx = nx;
-                    cnt++;
-                    break;
-                }
+            for (int d = 0; d < 4; d++){
+                int ny = cur.y + dy[d];
+                int nx = cur.x + dx[d];
+
+                if (!isIn(ny,nx)) continue;
+                if ((cur.num + 1) != map[ny][nx]) continue;
+                // if (cur.cnt + cur.rem < ans) continue;
+
+                q.offer(new Pos(ny,nx,cur.cnt+1, cur.rem-1));
             }
-
-            if (y == sy && x == sx)
-                flag = false;
         }
 
-        return cnt;
+        return result;
+    }
+
+    static boolean isIn(int y, int x){
+        if (y < 0 || y >= N || x < 0 || x >= N) return false;
+        return true;
+    }
+
+    static class Pos{
+        int y, x, num, cnt, rem;
+        public Pos(int y, int x, int cnt, int rem){
+            this.y = y;
+            this.x = x;
+            this.num = map[y][x];
+            this.cnt = cnt;
+            this.rem = rem;
+        }
     }
 }
