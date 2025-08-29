@@ -1,5 +1,8 @@
-SELECT B.TITLE, B.BOARD_ID, R.REPLY_ID, R.WRITER_ID, R.CONTENTS, DATE_FORMAT(R.CREATED_DATE,'%Y-%m-%d')
-  FROM USED_GOODS_BOARD B, USED_GOODS_REPLY R
- WHERE B.BOARD_ID = R.BOARD_ID
-   AND B.CREATED_DATE LIKE '2022-10%'
- ORDER BY R.CREATED_DATE, B.TITLE;
+# 2022년 10월에 작성된 게시글 제목, 게시글 ID / 댓글 ID, 댓글 작성자 ID, 댓글 내용, 댓글 작성일
+# 댓글 작성일을 기준으로 오름차순 - 댓글 작성일이 같다면 게시글 제목을 기준으로 오름차순
+
+select b.title as TITLE, b.board_id as BOARD_ID, r.reply_id as REPLY_ID, r.writer_id as WRITER_ID, r.contents as CONTENTS, date_format(r.created_date, '%Y-%m-%d') as CREATED_DATE
+  from used_goods_board b, used_goods_reply r
+ where b.board_id = r.board_id
+   and b.created_date like '2022-10%'
+ order by r.created_date, b.title
