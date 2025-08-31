@@ -1,7 +1,4 @@
-select flavor
-  from first_half
- group by flavor
-having sum(total_order) > 3000
- and flavor in (select flavor from icecream_info where INGREDIENT_TYPE = 'fruit_based')
- order by sum(total_order) desc
- 
+select h.flavor
+  from first_half h, icecream_info i
+ where h.total_order >= 3000 and h.flavor = i.flavor and i.ingredient_type like 'fruit_based'
+ order by h.total_order desc;
