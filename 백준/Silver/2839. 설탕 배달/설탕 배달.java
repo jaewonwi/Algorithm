@@ -1,35 +1,28 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 public class Main {
-	static int N, COUNT = -1;
-	static int[][] ondo;
-	
-	public static void main(String[] args) throws Exception {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-		N = Integer.parseInt(br.readLine());
-		
-		// 3kg & 5kg
-		int cnt = -1; 
-		
-		if (N % 5 == 0) {
-			cnt = N/5;
-		} else {
-			for (int i = N/5; i >= 0; i--) {
-				int rem = N - 5 * i;
-				if (rem % 3 == 0) {
-					cnt = i;
-					cnt += rem /3;
-					break;
-				}
-			}
-		}
-		
-		System.out.println(cnt);
-		
-		
-	}
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringTokenizer st;
+    static StringBuilder sb = new StringBuilder();
+    static int N;
+    public static void main(String[] args) throws Exception{
+        N = Integer.parseInt(br.readLine());
+        if (N % 5 == 0){
+            System.out.println(N/5);
+        } else {
+            int cnt = 0;
+            while (N >= 0){
+                N -= 3;
+                cnt++;
+                if (N % 5 == 0){
+                    System.out.println(cnt + N/5);
+                    break;
+                }
+            }
+            if (N < 0){
+                System.out.println(-1);
+            }
+        }
+    }
 }
