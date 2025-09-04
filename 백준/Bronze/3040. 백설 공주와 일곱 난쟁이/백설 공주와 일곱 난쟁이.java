@@ -5,45 +5,35 @@ public class Main {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static StringTokenizer st;
     static StringBuilder sb = new StringBuilder();
+	static int sum;
+	static int[] input, select;
+	public static void main(String[] args) throws Exception{
+    	// 0 < x1,x2,...,x9 < 100 -> 합 = 100
+		input = new int[9];
+		select = new int[7];
+		sum = 0;
+		for (int i = 0; i < 9; i++){
+			input[i] = Integer.parseInt(br.readLine());
+			sum += input[i];
+		}
 
-    static int diff, ans;
-    static int[] dwarfs, select;
-
-    public static void main(String[] args) throws Exception{
-        dwarfs = new int[9];
-
-        // 입력
-        for (int i = 0; i < 9; i++){
-            dwarfs[i] = Integer.parseInt(br.readLine());
-        }
-
-        diff = Arrays.stream(dwarfs).sum() - 100;
-        select = new int[2];
-
-        subset(0, 0);
+		subset(0,0,0);
     }
 
-    static void subset(int idx, int cnt){
-        if (cnt == 2){
-            if (diff != Arrays.stream(select).sum())
-                return;
+	public static void subset(int idx, int cnt, int sum){
+		if (cnt == 7){
+			if (sum == 100){
+				for (int i = 0; i < 7; i++){
+					System.out.println(select[i]);
+				}
+			}
+			return;
+		}
 
-            // 출력
-            for (int i = 0; i < 9; i++){
-                if (dwarfs[i] == select[0] || dwarfs[i] == select[1])
-                    continue;
-                System.out.println(dwarfs[i]);
-            }
+		if (idx == 9) return;
 
-            return;
-        }
-
-        if (idx == 9)
-            return;
-
-        select[cnt] = dwarfs[idx];
-        subset(idx+1, cnt+1);
-        subset(idx+1, cnt);
-    }
-
+		select[cnt] = input[idx];
+		subset(idx+1, cnt+1, sum+input[idx]);
+		subset(idx+1, cnt, sum);
+	}
 }
