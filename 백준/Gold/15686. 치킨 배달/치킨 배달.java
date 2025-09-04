@@ -8,7 +8,7 @@ public class Main {
     static int N, M, ans = Integer.MAX_VALUE;
     static int[][] map;
     static List<Pos> home, chicken;
-    static boolean[] select;
+    static int[] select;
     public static void main(String[] args) throws Exception{
     	// 빈칸 0, 집 1 (1 <= <= 2N), 치킨집 2 (M <= <= 13)
 		// (1,1) ~ (N,N)
@@ -43,7 +43,7 @@ public class Main {
         }
 
         // System.out.println("home : "+home.size()+"개, chicken: "+chicken.size()+"개");
-        select = new boolean[chicken.size()];
+        select = new int[M];
         // 2. 남겨놓을 치킨집 선택
         comb(0, 0);
 
@@ -58,10 +58,9 @@ public class Main {
                 int dist = Integer.MAX_VALUE;
                 Pos hp = home.get(i);
                 for (int j = 0; j < select.length; j++){
-                    if (select[j]){
-                        Pos cp = chicken.get(j);
-                        dist = Math.min(dist, Math.abs(hp.y - cp.y) + Math.abs(hp.x - cp.x));
-                    }
+                   int k = select[j];
+                    Pos cp = chicken.get(k);
+                    dist = Math.min(dist, Math.abs(hp.y - cp.y) + Math.abs(hp.x - cp.x));
                 }
                 sum += dist;
                 if (sum > ans) break;
@@ -70,11 +69,10 @@ public class Main {
             return;
         }
 
-        if (idx == select.length) return;
+        if (idx == chicken.size()) return;
 
-        select[idx] = true;
+        select[cnt] = idx;
         comb(idx+1, cnt+1);
-        select[idx] = false;
         comb(idx+1, cnt);
     }
 
