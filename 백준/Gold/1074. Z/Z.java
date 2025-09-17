@@ -4,39 +4,36 @@ import java.util.*;
 public class Main {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static StringTokenizer st;
-    static StringBuilder sb = new StringBuilder();
-
-    static int N, r, c, cnt;
+    static int N, r, c, idx;
     public static void main(String[] args) throws Exception{
         st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
         r = Integer.parseInt(st.nextToken());
         c = Integer.parseInt(st.nextToken());
 
-        cnt = 0;
-
-        int size = (int) Math.pow(2, N);
-        recursion(r, c, size);
-        System.out.println(cnt);
+        int size = (int) Math.pow(2,N);
+        idx = 0;
+        Z(r,c,size);
+        System.out.println(idx);
     }
 
-    static void recursion(int r, int c, int size){
-        // complete code
-        if (size == 1)
+    static void Z(int r, int c, int size){
+        int half = size / 2;
+        if (size == 1){
             return;
+        }
 
-        if (r < size / 2 && c < size / 2) {
-            recursion(r, c, size/2);
-        } else if (r < size/2 && size/2 <= c){
-            cnt += (size*size/4);
-            recursion(r, c-size/2, size/2);
-        } else if (size/2 <= r && c < size/2){
-            cnt += (size*size/4)*2;
-            recursion(r-size/2, c, size/2);
-        } else {
-            cnt += (size*size/4)*3;
-            recursion(r-size/2, c-size/2, size/2);
+        if (r < half && c < half){
+            Z(r,c,half);
+        } else if (r < half && c >= half){
+            idx += (size*size/4);
+            Z(r,c-half, half);
+        } else if (r >= half && c < half){
+            idx += (size*size/4)*2;
+            Z(r-half,c, half);
+        } else if (r >= half && c >= half) {
+            idx += (size*size/4)*3;
+            Z(r-half, c-half, half);
         }
     }
-
 }
