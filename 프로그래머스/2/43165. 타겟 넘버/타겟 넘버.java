@@ -1,31 +1,36 @@
-import java.util.*;
-
 class Solution {
-    static int answer = 0, size = 0, target;
-    static int[] mult = {-1, 1}, numbers;
-    public int solution(int[] ns, int t) {
-        numbers = ns;
-        target = t;
-        size = numbers.length;
+    int N, cnt = 0, target;
+    int[] numbers;
+    boolean[] flag;
+    public int solution(int[] nums, int tgt) {
+        numbers = nums;
+        target = tgt;
+        N = numbers.length;
+        flag = new boolean[N];
         
-        dfs(0, 0);
+        dfs(0);
         
-        return answer;
+        return cnt;
     }
     
-    static void dfs(int cnt, int sum){
-        if (cnt == size && sum == target){
-            // System.out.println(sum);
-            answer++;
+    void dfs(int idx){
+        if (idx == N){
+            int sum = 0;
+            for (int i = 0; i < N; i++){
+                if (flag[i]){
+                    sum += numbers[i];
+                } else {
+                    sum -= numbers[i];
+                }
+            }
+            if (sum == target)  cnt++;
+            
             return;
         }
         
-        if (cnt == size) return;
-        
-        for (int d = 0; d < 2; d++){
-            int num = numbers[cnt] * mult[d];
-            
-            dfs(cnt+1, sum+num);
-        }
+        flag[idx] = true;
+        dfs(idx+1);
+        flag[idx] = false;
+        dfs(idx+1);
     }
 }
