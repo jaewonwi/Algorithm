@@ -8,29 +8,21 @@ class Solution {
         N = numbers.length;
         flag = new boolean[N];
         
-        dfs(0);
+        dfs(0, 0);
         
         return cnt;
     }
     
-    void dfs(int idx){
+    void dfs(int idx, int sum){
         if (idx == N){
-            int sum = 0;
-            for (int i = 0; i < N; i++){
-                if (flag[i]){
-                    sum += numbers[i];
-                } else {
-                    sum -= numbers[i];
-                }
-            }
             if (sum == target)  cnt++;
             
             return;
         }
         
         flag[idx] = true;
-        dfs(idx+1);
+        dfs(idx+1, sum + numbers[idx]);
         flag[idx] = false;
-        dfs(idx+1);
+        dfs(idx+1, sum - numbers[idx]);
     }
 }
