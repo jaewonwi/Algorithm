@@ -1,5 +1,6 @@
-select p.product_code, sum(s.sales_amount * p.price) as sales
-  from product p join offline_sale s
-        on p.product_id = s.product_id
- group by p.product_code
- order by sales desc, product_code
+SELECT P.PRODUCT_CODE, SUM(P.PRICE * O.SALES_AMOUNT) AS SALES /*매출액(판매가*판매량)의 합계 */
+  FROM PRODUCT P, OFFLINE_SALE O
+ WHERE P.PRODUCT_ID = O.PRODUCT_ID
+ GROUP BY P.PRODUCT_ID
+ ORDER BY SALES DESC, P.PRODUCT_CODE
+# ORDER BY SUM(P.PRICE * O.SALES_AMOUNT) DESC, PRODUCT_ID
