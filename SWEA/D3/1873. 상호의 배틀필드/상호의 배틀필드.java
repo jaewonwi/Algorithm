@@ -1,126 +1,112 @@
 import java.io.*;
 import java.util.*;
 
-// . *(벽돌벽) #(강철벽) -(물. 전차는 들어갈 수 없음) ^ v < >
-// Up Down Left Right Shoot
 public class Solution {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static StringTokenizer st;
     static StringBuilder sb = new StringBuilder();
-
-    static int T, H, W, N, y, x;
-    static char[][] map;
-    static char[] move;
-    static int[] dy = { -1, 1, 0, 0 };   // 상하좌우
-    static int[] dx = { 0, 0, -1, 1 };
-    static char[] dir = { '^', 'v', '<', '>' };
-    static char[] moveDir = { 'U', 'D', 'L', 'R' };
+    static int T, H, W, N, sr, sc, sd;
+	static char[][] map;
+    static int[] dr = {-1,1,0,0}, dc = {0,0,-1,1};  // UDLR 순서
     public static void main(String[] args) throws Exception{
+        // 포탄 - 벽돌벽, 강철벽, 맵 밖까지 직진
+        // 벽? 포탄소멸! -> 벽돌벽? 벽도 함께 소멸되어 평지가 됨
         T = Integer.parseInt(br.readLine());
         for (int tc = 1; tc <= T; tc++){
             sb.append("#").append(tc).append(" ");
-            // 입력
-            st = new StringTokenizer(br.readLine());
+
+            st = new StringTokenizer(br.readLine().trim());
             H = Integer.parseInt(st.nextToken());
             W = Integer.parseInt(st.nextToken());
-
             map = new char[H][W];
             for (int i = 0; i < H; i++){
-                String str = br.readLine();
+                String str = br.readLine().trim();
                 for (int j = 0; j < W; j++){
-                    map[i][j] = str.charAt(j);
-                    if (map[i][j] == '^' || map[i][j] == 'v' || map[i][j] == '<' || map[i][j] == '>'){
-                        y = i;
-                        x = j;
+                    char c = str.charAt(j);
+                    map[i][j] = c;
+                    if (c == '>' || c == '<' || c == '^' || c == 'v'){
+                        sd = changeToInt(c);
+                        sr = i;
+                        sc = j;
                     }
+
                 }
             }
-
             N = Integer.parseInt(br.readLine());
-            move = new char[N];
-            move = br.readLine().toCharArray();
-
-            // 실행
+            String str = br.readLine().trim();
             for (int i = 0; i < N; i++){
-                if (move[i] == 'S')
+                char order = str.charAt(i);
+                if (order == 'S')
                     shoot();
-                else
-                    go(move[i]);
-            }
-
-            for (int i = 0; i < H; i++) {
-                for (int j = 0; j < W; j++) {
-                    sb.append(map[i][j]);
+                else {
+                    move(order);
                 }
-                sb.append("\n");
             }
-
+            printMap();
         }
-
         System.out.println(sb);
+    }
+    static void move(char c){
+        sd = getDir(c);
+        int nr = sr + dr[sd];
+        int nc = sc + dc[sd];
 
+        if (isMap(nr, nc) && map[nr][nc] == '.') {
+            map[sr][sc] = '.';
+            sr = nr;
+            sc = nc;
+        }
+        map[sr][sc] = changeToDir(sd);
     }
 
-    // 포탄은 벽에 충돌하거나 맵 밖으로 나갈때까지 직진
-    // 1.벽돌벽 - 벽 파괴 후 평지
-    // 2.강철벽, 맵 밖으로 나감 - 아무일 X
     static void shoot(){
-        int d = getDirection(map[y][x]);
-        int ny = y;
-        int nx = x;
-
+        int nr = sr;
+        int nc = sc;
         while (true){
-            ny += dy[d];
-            nx += dx[d];
+            nr += dr[sd];
+            nc += dc[sd];
 
-            if (!isInside(ny, nx)) break;   // 맵 밖으로 나갔다면
-
-            if (map[ny][nx] == '*'){
-                map[ny][nx] = '.';
-                break;
-            } else if (map[ny][nx] =='#'){
+            if (!isMap(nr, nc)) break;  // 맵을 벗어날 경우
+            if (map[nr][nc] == '#') break;  // 강철벽
+            if (map[nr][nc] == '*') {   // 벽돌벽
+                map[nr][nc] = '.';
                 break;
             }
         }
     }
 
-    // 방향 전환 후 직진
-    static void go(char move){
-        int d = -1;
-        for (int i = 0; i < 4; i++){
-            if (move == moveDir[i])
-                d = i;
-        }
-        map[y][x] = dir[d];   // 방향 바꾸고
-
-        int ny = y + dy[d];
-        int nx = x + dx[d];
-        if (!isInside(ny, nx)) return;
-
-        if (map[ny][nx] == '.'){
-            map[ny][nx] = map[y][x];
-            map[y][x] = '.';
-            y = ny;
-            x = nx;
-        }
+    static int getDir(char c){
+        if (c == 'U') return 0;
+        else if (c == 'D') return 1;
+        else if (c == 'L') return 2;
+        else return 3;
     }
 
-    static boolean isInside(int y, int x){
-        if (y < 0 || y >= H || x < 0 || x >= W)
-            return false;
+    static int changeToInt(char c){
+        if (c == '^') return 0;
+        else if (c == 'v') return 1;
+        else if (c == '<') return 2;
+        else return 3;
+    }
+
+    static char changeToDir(int d){
+        if (d == 0) return '^';
+        else if (d == 1) return 'v';
+        else if (d == 2) return '<';
+        else return '>';
+    }
+
+    static boolean isMap(int r, int c){
+        if (r < 0 || r >= H || c < 0 || c >= W) return false;
         return true;
     }
 
-    static int getDirection(char tank){
-        if (tank == '^')
-            return 0;
-        else if (tank == 'v') {
-            return 1;
-        } else if (tank == '<') {
-            return 2;
-        } else if (tank == '>') {
-            return 3;
-        } else
-            return -1;
+    static void printMap(){
+        for (int i = 0; i < H; i++){
+            for (int j = 0; j < W; j++){
+                sb.append(map[i][j]);
+            }
+            sb.append("\n");
+        }
     }
 }
