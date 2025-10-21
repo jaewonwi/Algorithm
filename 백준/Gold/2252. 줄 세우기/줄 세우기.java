@@ -5,58 +5,48 @@ public class Main {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static StringTokenizer st;
     static StringBuilder sb = new StringBuilder();
-    static int N, M;
-    static List<List<Integer>> adjList = new ArrayList<>();
-    static int[] topo;
-    static Queue<Integer> queue;
-
-    // 위상 정렬
-    // 진입 차수가 0인 것들을 Queue에 넣는다.
-    // -> 하나씩 꺼내서 해당 노드에서 갈 수 있는 간선 제거(진입차수도 -)
-    // -> 새롭게 진입차수가 0이 된 것들을 다시 큐에 삽입 -> 반복
+    static int N, M, A, B;
+	static int[] topo;	// 위상정렬 차수
+	static List<List<Integer>> graph = new ArrayList<>();
     public static void main(String[] args) throws Exception{
-        st = new StringTokenizer(br.readLine());
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
+		st = new StringTokenizer(br.readLine());
+		N = Integer.parseInt(st.nextToken());
+		M = Integer.parseInt(st.nextToken());
+		topo = new int[N+1];
 
-        topo = new int[N+1];
-        for (int i = 0; i <= N; i++){
-            adjList.add(new ArrayList<>());
-        }
+		for (int i = 0; i <= N; i++){
+			graph.add(new ArrayList<>());
+		}
 
-        for (int i = 0; i < M; i++){
-            st = new StringTokenizer(br.readLine());
-            int a = Integer.parseInt(st.nextToken());
-            int b = Integer.parseInt(st.nextToken());
+		for (int i = 0; i < M; i++){
+			st = new StringTokenizer(br.readLine());
+			A = Integer.parseInt(st.nextToken());
+			B = Integer.parseInt(st.nextToken());
 
-            adjList.get(a).add(b);
-            topo[b]++;
-        }
+			// A -> B 연결
+			graph.get(A).add(B);
+			topo[B]++;
+		}
 
-        queue = new ArrayDeque<>();
-        for (int i = 1; i <= N; i++){
-            if (topo[i] == 0)
-                queue.offer(i);
-        }
+		// 진입 차수가 0인 것 Queue에 추가
+		Queue<Integer> q = new ArrayDeque<>();
+		for (int i = 1; i <= N; i++){
+			if (topo[i] == 0) q.offer(i);
+		}
 
-        // 큐에서 꺼내서 갈 수 있는 곳 하나씩 제거 -> 진입 0인 노드 큐 삽입 -> 반복
-        while (!queue.isEmpty()){
-            int node = queue.poll();
-            sb.append(node).append(" ");
+		while (!q.isEmpty()){	// 남은 원소가 없을 때까지
+			int cur = q.poll();
+			sb.append(cur).append(" ");
 
-            int size = adjList.get(node).size();
-            for (int i = 0; i < size; i++){
-                int num = adjList.get(node).get(i);
-                topo[num]--;
-                if (topo[num] == 0){
-                    queue.offer(num);
-                }
-            }
+			List<Integer> list = graph.get(cur);
+			int size = list.size();
+			for(int i = 0; i < size; i++){
+				int next = list.get(i);
+				topo[next]--;
+				if (topo[next] == 0) q.offer(next);
+			}
+		}
 
-        }
-
-        // 만약 queue가 비었는데, 모든 노드 방문 처리가 안돼있다면 cycle이 있다는 것 -> 위상정렬 불가
-
-        System.out.println(sb);
+		System.out.println(sb);
     }
 }
