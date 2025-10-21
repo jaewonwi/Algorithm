@@ -1,48 +1,29 @@
 import java.io.*;
 import java.util.*;
 
-// Battery Charger - location (x,y), coverage c, perfomance p
-// 거리 = |x1 - x2| + |y1 - y2|
-// 겹치는 경우 선택해서 접속
-// A와 B의 이동경로가 주어짐. 이때 그 범위 내에 들어오면 P만큼 충전가능하다. (두명이 같은 곳이면 나눠서 충전)
-// 모든 사용자가 충전한 양의 합의 최댓값 구하기!
-// A는 (1,1)에서 B는 (10,10)에서 출발. 총 이동시간 M (20 <= M <= 100)
-// BC의 개수 A 1~8, C 1~4, P 10~500
-// 0초부터 충전가능!! 같은 위치에 2개의 BC가 설치되는 경우는 없다. A,B가 동시에 같은 위치일 수는 있음.
-
 public class Solution {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static StringTokenizer st;
     static StringBuilder sb = new StringBuilder();
 
-    static int T, M, A, ans;
+	static int T, M, A, ans;
+    static int ax, ay, bx, by;
     static int[] moveA, moveB;
-    static List<BC> batteries = new ArrayList<>();
-
-    static int ay, ax, by, bx;
-    static int[] dy = {0, -1, 0, 1, 0}; // . ^ > v <
-    static int[] dx = {0, 0, 1, 0, -1};
-
-    static class BC{
-        int x, y, c, p;
-        private BC(int x, int y, int c, int p){
-            this.x = x;
-            this.y = y;
-            this.c = c;
-            this.p = p;
-        }
-    }
-
+    static Battery[] batteries;
+    static int[] dy = {0,-1,0,1,0}, dx = {0,0,1,0,-1};  // 제자리,상,우,하,좌
     public static void main(String[] args) throws Exception{
         T = Integer.parseInt(br.readLine());
         for (int tc = 1; tc <= T; tc++){
+            ans = 0;
             st = new StringTokenizer(br.readLine());
-            M = Integer.parseInt(st.nextToken());   // 움직이는 횟수
-            A = Integer.parseInt(st.nextToken());   // 충전기 개수
+            M = Integer.parseInt(st.nextToken());   // 총 이동시간
+            A = Integer.parseInt(st.nextToken());   // BC의 개수
 
-            // A와 B의 움직임 입력
+            ax = 0; ay = 0;
+            bx = 9; by = 9;
             moveA = new int[M];
             moveB = new int[M];
+
             st = new StringTokenizer(br.readLine());
             for (int i = 0; i < M; i++){
                 moveA[i] = Integer.parseInt(st.nextToken());
@@ -52,51 +33,45 @@ public class Solution {
                 moveB[i] = Integer.parseInt(st.nextToken());
             }
 
-            // 충전기 입력
-            batteries.clear();
+            batteries = new Battery[A];
             for (int a = 0; a < A; a++){
                 st = new StringTokenizer(br.readLine());
-                int x = Integer.parseInt(st.nextToken());
-                int y = Integer.parseInt(st.nextToken());
-                int c = Integer.parseInt(st.nextToken());
-                int p = Integer.parseInt(st.nextToken());
-
-                batteries.add(new BC(x, y, c, p));
+                int x = Integer.parseInt(st.nextToken()) - 1;   // 좌표
+                int y = Integer.parseInt(st.nextToken()) - 1;
+                int c = Integer.parseInt(st.nextToken());   // 충전 범위
+                int p = Integer.parseInt(st.nextToken());   // 처리량
+                batteries[a] = new Battery(x,y,c,p);
             }
 
-            ans = 0;
-            ay = 1; ax = 1; by = 10; bx = 10;
             charge();
             for (int i = 0; i < M; i++){
-                ay += dy[moveA[i]];
                 ax += dx[moveA[i]];
-                by += dy[moveB[i]];
+                ay += dy[moveA[i]];
                 bx += dx[moveB[i]];
+                by += dy[moveB[i]];
                 charge();
             }
 
-
             sb.append("#").append(tc).append(" ").append(ans).append("\n");
         }
-
         System.out.println(sb);
     }
 
     static void charge(){
         int max = 0;
+        // 현재 위치에서 충전할 수 있는 최대 충전치 구하기
         for (int i = 0; i < A; i++){
-            for (int j = 0; j < A; j++){
+            for (int j = 0; j < A ; j++){
                 int sum = 0;
+                int aP = getP(batteries[i], ax, ay);
+                int bP = getP(batteries[j], bx, by);
 
-                int Pa = getP(batteries.get(i), ay, ax);
-                int Pb = getP(batteries.get(j), by, bx);
-
-                if (Pa == 0 && Pb == 0) continue;
+                if (aP == 0 && bP == 0) continue;
 
                 if (i != j){
-                    sum = Pa + Pb;
+                    sum = aP + bP;
                 } else {
-                    sum = Math.max(Pa, Pb);
+                    sum = Math.max(aP, bP);
                 }
 
                 max = Math.max(max, sum);
@@ -106,8 +81,19 @@ public class Solution {
         ans += max;
     }
 
-    static int getP(BC bc, int y, int x){
-        if (Math.abs(bc.y-y)+Math.abs(bc.x-x) <= bc.c) return bc.p;
+    static int getP(Battery battery, int x, int y){
+        if (Math.abs(battery.x - x) + Math.abs(battery.y - y) <= battery.c) return battery.p;
         return 0;
+    }
+
+    public static class Battery{
+        int x, y, c, p;
+
+        public Battery(int x, int y, int c, int p){
+            this.x = x;
+            this.y = y;
+            this.c = c;
+            this.p = p;
+        }
     }
 }
