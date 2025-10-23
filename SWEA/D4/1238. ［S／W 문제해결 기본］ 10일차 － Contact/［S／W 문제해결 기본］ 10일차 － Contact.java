@@ -2,70 +2,57 @@ import java.io.*;
 import java.util.*;
 
 public class Solution {
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static StringTokenizer st;
-    static StringBuilder sb = new StringBuilder();
+	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	static StringTokenizer st;
+	static StringBuilder sb = new StringBuilder();
+	static int n, start, from, to, ans;
+	static List<List<Integer>> friends = new ArrayList<>();
+	static boolean[] visit = new boolean[101];
+	static Queue<Integer> q = new ArrayDeque<>();
+	public static void main(String[] args) throws Exception{
+		for (int i = 0; i < 101; i++){		// friends 리스트 생성
+			friends.add(new ArrayList<>());
+		}
 
-    static int L, start, ans;
-    static List<List<Integer>> list;
-    static boolean[] visit;
+		for (int tc = 1; tc <= 10; tc++){
+			st = new StringTokenizer(br.readLine());
+			n = Integer.parseInt(st.nextToken());
+			start = Integer.parseInt(st.nextToken());
 
-    public static void main(String[] args) throws Exception{
-        for (int tc = 1; tc <= 10; tc++){
-            sb.append("#").append(tc).append(" ");
+			Arrays.fill(visit, false);
+			for (int i = 0; i < 101; i++){
+				friends.get(i).clear();
+			}
 
-            list = new ArrayList<>();
-            list.clear();
-            for (int i = 0; i <= 100; i++){
-                list.add(new ArrayList<>());
-            }
-            visit = new boolean[101];
+			st = new StringTokenizer(br.readLine());
+			for (int i = 0; i < n/2; i++){
+				from = Integer.parseInt(st.nextToken());
+				to = Integer.parseInt(st.nextToken());
+				friends.get(from).add(to);
+			}
 
-            st = new StringTokenizer(br.readLine());
-            L = Integer.parseInt(st.nextToken());
-            start = Integer.parseInt(st.nextToken());
+			q.clear();
+			visit[start] = true;
+			q.offer(start);
+			while (!q.isEmpty()){
+				int size = q.size();
+				ans = 0;
 
-            st = new StringTokenizer(br.readLine());
-            for (int i = 0; i < L/2; i++){
-                int from = Integer.parseInt(st.nextToken());
-                int to = Integer.parseInt(st.nextToken());
-                list.get(from).add(to);
-            }
+				for (int i = 0; i < size; i++){
+					int cur = q.poll();
+					ans = Math.max(ans, cur);
 
-            ans = start;
-            bfs(start);
+					for (int next : friends.get(cur)){
+						if (visit[next]) continue;
 
-            sb.append(ans).append("\n");
-        }
+						visit[next] = true;
+						q.add(next);
+					}
+				}
+			}
 
-        System.out.println(sb);
-    }
-
-    static void bfs(int start){
-        Queue<Integer> queue = new ArrayDeque<>();
-        visit[start] = true;
-        queue.add(start);
-
-        while (!queue.isEmpty()){
-            int size = queue.size();
-            int tMax = 0;
-
-            for (int i = 0; i < size; i++){
-                int cur = queue.poll();
-
-                for (int j = 0; j < list.get(cur).size(); j++){
-                    int next = list.get(cur).get(j);
-                    if (visit[next]) continue;
-
-                    visit[next] = true;
-                    queue.add(next);
-                    tMax = Math.max(tMax, next);
-                }
-
-                if (tMax != 0){
-                    ans = tMax;
-                }
-            }
-        }
-    }
+			sb.append("#").append(tc).append(" ").append(ans).append("\n");
+		}
+		System.out.println(sb);
+	}
 }
