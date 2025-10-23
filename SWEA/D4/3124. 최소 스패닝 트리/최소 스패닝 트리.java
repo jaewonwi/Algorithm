@@ -1,81 +1,77 @@
 import java.io.*;
 import java.util.*;
 
-// 주어지는 정점, 간선 수가 많음 => 효율을 위해 Prim 알고리즘 사용하자
 public class Solution {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static StringTokenizer st;
     static StringBuilder sb = new StringBuilder();
-
     static int T, V, E;
-    static long answer;
-    static List<List<Edge>> list;
-    static boolean[] visit;
-    static PriorityQueue<Edge> pq = new PriorityQueue<>((e1, e2) -> e1.c - e2.c);
-
+	static long ans;
+	static List<List<Edge>> graph = new ArrayList<>();
+	static boolean[] visit;
+	static PriorityQueue<Edge> pq = new PriorityQueue<>((e1, e2) -> e1.c - e2.c);
     public static void main(String[] args) throws Exception{
-        T = Integer.parseInt(br.readLine());
-        for (int tc = 1; tc <= T; tc++){
-            sb.append("#").append(tc).append(" ");
+		T = Integer.parseInt(br.readLine());
+		for (int tc = 1; tc <= T; tc++){
+			st = new StringTokenizer(br.readLine());
+			V = Integer.parseInt(st.nextToken());
+			E = Integer.parseInt(st.nextToken());
 
-            // 입력
-            st = new StringTokenizer(br.readLine());
-            V = Integer.parseInt(st.nextToken());
-            E = Integer.parseInt(st.nextToken());
+			// 초기화
+			graph.clear();
+			for (int i = 0; i <= V; i++){
+				graph.add(new ArrayList<>());
+			}
+			visit = new boolean[V+1];
 
-            list = new ArrayList<>();
-            for (int i = 0; i <= V; i++){
-                list.add(new ArrayList<>());
-            }
-            visit = new boolean[V+1];
+			for (int i = 0; i < E; i++){
+				st = new StringTokenizer(br.readLine());
+				int A = Integer.parseInt(st.nextToken());
+				int B = Integer.parseInt(st.nextToken());
+				int C = Integer.parseInt(st.nextToken());
 
-            for (int i = 0; i < E; i++){
-                st = new StringTokenizer(br.readLine());
-                int A = Integer.parseInt(st.nextToken());
-                int B = Integer.parseInt(st.nextToken());
-                int C = Integer.parseInt(st.nextToken());
+				graph.get(A).add(new Edge(B,C));
+				graph.get(B).add(new Edge(A,C));
+			}
 
-                list.get(A).add(new Edge(B, C));
-                list.get(B).add(new Edge(A, C));
-            }
+			// prim 알고리즘
+			ans = 0;
+			pq.clear();
 
-            // 풀이
-            answer = 0;
-            pq.clear();
+			prim();
 
-            prim();
-
-            sb.append(answer).append("\n");
-        }
-        System.out.println(sb);
+			sb.append("#"+tc+" ").append(ans).append("\n");
+		}
+		System.out.println(sb);
     }
 
-    static void prim(){
-        int cnt = 1;    // 선택된 정점의 수
-        visit[1] = true;
-        pq.addAll(list.get(1)); // 1번 정점으로부터 갈 수 있는 모든 간선을 추가한다.
+	static void prim(){
+		int cnt = 1;	// 선택된 정점의 수
+		visit[1] = true;
+		pq.addAll(graph.get(1));	// 1번 정점에서 갈 수 있는 간선 추가
 
-        while (!pq.isEmpty()){
-            Edge edge = pq.poll();
-            if (visit[edge.v2]) continue;
+		while (!pq.isEmpty()){
+			Edge e = pq.poll();
+			if (visit[e.b]) continue;
 
-            visit[edge.v2] = true;
-            answer += edge.c;
-            cnt++;
+			visit[e.b] = true;
+			ans += e.c;
+			cnt++;
 
-            if (cnt == V) break;
+			if (cnt == V) break;
 
-            for (Edge e : list.get(edge.v2)){
-                if (!visit[e.v2]) pq.add(e);
-            }
-        }
-    }
+			for (Edge ne : graph.get(e.b)){
+				if (!visit[ne.b]) pq.add(ne);
+			}
+		}
+	}
 
-    static class Edge {
-        int v2, c;
-        public Edge(int v2, int c){
-            this.v2 = v2;
-            this.c = c;
-        }
-    }
+	static class Edge{
+		int b, c;	// |c| <= 1000_000
+
+		public Edge(int b, int c){
+			this.b = b;
+			this.c = c;
+		}
+	}
 }
