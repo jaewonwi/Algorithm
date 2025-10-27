@@ -4,39 +4,37 @@ import java.util.*;
 public class Main {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static StringTokenizer st;
-    static StringBuilder sb = new StringBuilder();
-    static int N, K;    // 100만, >= 만
-    static int[] lan;
+    static int N, K;
+    static int[] input;
     public static void main(String[] args) throws Exception{
         st = new StringTokenizer(br.readLine());
-        K = Integer.parseInt(st.nextToken());
-        N = Integer.parseInt(st.nextToken());
-        lan = new int[K];
+        K = Integer.parseInt(st.nextToken());   // 10000
+        N = Integer.parseInt(st.nextToken());   // 100_0000
+        input = new int[K];
         for (int i = 0; i < K; i++){
-            lan[i] = Integer.parseInt(br.readLine());
+            input[i] = Integer.parseInt(br.readLine());
         }
 
         long left = 1;
-        long right = Arrays.stream(lan).max().getAsInt();
-        long mid = 0;
+        long right = Arrays.stream(input).max().getAsInt();
         while (left <= right){
-            mid = (left + right)/2;
+            long mid = (left+right)/2;
 
-            if (getCnt(mid) >= N){
-                left = mid+1;
-            } else {
+            if (getCnt(mid) < N){
                 right = mid-1;
+            } else {
+                left = mid+1;
             }
         }
 
-        System.out.println(left-1);
+        System.out.println(right);
     }
 
-    static long getCnt(long length){
-        long sum = 0;
+    static int getCnt(long len){
+        int cnt = 0;
         for (int i = 0; i < K; i++){
-            sum += lan[i] / length;
+            cnt += input[i] / len;
         }
-        return sum;
+        return cnt;
     }
 }
