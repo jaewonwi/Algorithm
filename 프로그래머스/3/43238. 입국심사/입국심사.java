@@ -2,29 +2,25 @@ import java.util.*;
 class Solution {
     public long solution(int n, int[] times) {
         int max = Arrays.stream(times).max().getAsInt();
-        
-        long start = 0;
-        long end = (long) n * max;
-      
-        while (start <= end){
-            long mid = (start+end)/2;
+        long left = 0;
+        long right = (long) max * n;
+        while (left <= right){
+            long mid = (left+right)/2;
             
             if (cal(mid, times) < n){
-                start = mid+1;
+                left = mid+1;
             } else {
-                end = mid-1;
+                right = mid-1;
             }
         }
             
-        
-        return start;
+        return left;
     }
     
-    private long cal(long tot, int[] times){
+    public long cal(long mid, int[] times){
         long sum = 0;
         for (int i = 0; i < times.length; i++){
-            int t = times[i];
-            sum += tot / t;
+            sum += mid / times[i];
         }
         return sum;
     }
