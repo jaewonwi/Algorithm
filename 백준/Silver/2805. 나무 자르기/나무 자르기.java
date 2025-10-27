@@ -1,51 +1,45 @@
 import java.io.*;
 import java.util.*;
 
-// 이분탐색 left, right 잘 정하기
 public class Main {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static StringTokenizer st;
-    static StringBuilder sb = new StringBuilder();
     static int N, M;
-    static int[] trees;
-
+	static int[] tree;
     public static void main(String[] args) throws Exception{
-        st = new StringTokenizer(br.readLine());
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
+    	// 절단하고 남은 나무가 M 이상이되, 최소가 되도록 하려고 함
+		st = new StringTokenizer(br.readLine());
+		N = Integer.parseInt(st.nextToken());
+		M = Integer.parseInt(st.nextToken());
+		tree = new int[N];
+		st = new StringTokenizer(br.readLine());
+		int max = 0;
+		for (int i = 0; i < N; i++){
+			tree[i] = Integer.parseInt(st.nextToken());
+			max = Math.max(max, tree[i]);
+		}
 
-        trees = new int[N];
-        st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < N; i++){
-            trees[i] = Integer.parseInt(st.nextToken());
-        }
+		long left = 0;
+		long right = max;
+		while (left <= right){
+			long mid = (left + right) / 2;
 
-        // 절단기에 설정할 수 있는 높이 H의 최댓값
-        int left = 1;
-        int right = Arrays.stream(trees).max().getAsInt();
-
-        while (left <= right){
-            int mid = (left+right)/2;
-
-            if (cut(mid) >= M){
-                left = mid+1;
-            } else {
-                right = mid-1;
-            }
-        }
-
-        System.out.println(left-1);
+			if (cut(mid) < M){
+				right = mid - 1;
+			} else {
+				left = mid + 1;
+			}
+		}
+		System.out.println(right);
     }
 
-    // H 높이에서 잘랐을 때 나오는 나무
-    static long cut(int H){
-        long sum = 0;
-        for (int i = 0; i < N; i++){
-            if (trees[i] > H){
-                sum += trees[i] - H;
-            }
-        }
-
-        return sum;
-    }
+	static long cut(long mid){
+		long sum = 0;
+		for (int i = 0; i < N; i++){
+			long rem = tree[i] - mid;
+			if (rem < 0) continue;
+			sum += rem;
+		}
+		return sum;
+	}
 }
