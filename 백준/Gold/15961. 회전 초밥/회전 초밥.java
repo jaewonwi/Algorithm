@@ -1,81 +1,65 @@
 import java.io.*;
 import java.util.*;
 
-// sliding window ...
 public class Main {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static StringTokenizer st;
-    static StringBuilder sb = new StringBuilder();
+    static int N, d, k, c, cnt, ans = 0;
+    static int[] dish, sushi;
 
-    static int N, d, k, c, sum, ans;
-    static int[] sushi, cnt;
-    static List<Integer> list = new ArrayList<>();
-
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
+        // 입력
         st = new StringTokenizer(br.readLine());
-        N = Integer.parseInt(st.nextToken());   // 벨트 위 접시 수
-        d = Integer.parseInt(st.nextToken());   // 초밥 가짓수
-        k = Integer.parseInt(st.nextToken());   // 연속해서 먹는 수
+        N = Integer.parseInt(st.nextToken());   // 접시 수 3,000,000
+        d = Integer.parseInt(st.nextToken());   // 종류 3000
+        k = Integer.parseInt(st.nextToken());   // 연속으로 먹어야하는 수 3000
         c = Integer.parseInt(st.nextToken()) - 1;   // 쿠폰 번호
-
-        sushi = new int[N];
-        for (int n = 0; n < N; n++){
-            sushi[n] = Integer.parseInt(br.readLine()) - 1;
+        dish = new int[N];
+        for (int i = 0; i < N; i++) {
+            dish[i] = Integer.parseInt(br.readLine()) - 1;
         }
 
-        cnt = new int[d];
         int left = 0;
         int right = k;
-
-        sum = 0;
-        ans = 0;
-        for (int i = left; i < right; i++){ // k개 연속먹기
-            eat(sushi[i]);
+        sushi = new int[d];
+        cnt = 0;
+        for (int i = left; i < right; i++){
+            eat(i);
         }
         coupon();
 
-        do{
-            cancel(sushi[left % N]);
-            eat(sushi[right % N]);
+        do {
+            cancel(left);
+            eat(right);
             coupon();
 
-            left++;
-            right++;
-        } while (left % N != 0);
+            left = (left+1) % N;
+            right = (right+1) % N;
+        } while (left > 0);
 
         System.out.println(ans);
-
     }
 
-    // 초밥 먹기!
-    static void eat(int sushi){
-//        System.out.println("+ "+sushi);
-        // 기존에 안 먹은 거
-        if (cnt[sushi] == 0){
-            sum++;
-        }
-        cnt[sushi]++;
+    static void eat(int i){
+        int eat = dish[i];
+        if (sushi[eat] == 0)
+            cnt++;
+        sushi[eat]++;
     }
 
-    // 초밥 먹기 취소!
-    static void cancel(int sushi){
-//        System.out.println("- "+sushi);
-        cnt[sushi]--;
-        // 다시 뱉어서 0이 됐다면 -> 그 종류를 하나만 먹었던 거임 -> 먹은 가짓 수에서 하나를 빼자
-        if (cnt[sushi] == 0){
-            sum--;
+    static void cancel(int i){
+        int cancel = dish[i];
+        sushi[cancel]--;
+        if (sushi[cancel] == 0){
+            cnt--;
         }
     }
 
-    // 쿠폰 체크!
     static void coupon(){
-//        System.out.println("현재 먹은 가짓수: "+sum);
-        if (cnt[c] == 0){   // 쿠폰으로 받을 초밥은 아직 먹은 적이 없으면
-//            System.out.println("쿠폰으로 "+c+" 초밥먹기 => 총 " +(sum+1)+"가지");
-            ans = Math.max(ans, sum+1);
+        if (sushi[c] == 0) {
+            ans = Math.max(ans, cnt + 1);
         } else {
-//            System.out.println("쿠폰으로 먹을 초밥 이미 먹어봄 쩝; " + c);
-            ans = Math.max(ans, sum);
+            ans = Math.max(ans, cnt);
         }
     }
 }
