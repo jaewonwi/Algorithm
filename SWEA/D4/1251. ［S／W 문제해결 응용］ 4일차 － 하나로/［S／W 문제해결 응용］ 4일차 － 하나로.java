@@ -5,114 +5,75 @@ public class Solution {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static StringTokenizer st;
     static StringBuilder sb = new StringBuilder();
-    static int T, N;
-    static double E, answer;
+    static int TC, N;
+    static double E;
 
-    static PriorityQueue<Edge> pq = new PriorityQueue<>(Comparator.comparingDouble(e -> e.cost));
-
-    static int[] p, X, Y;
-    static long[] minDist;
-
-    // 모든 섬을 잇는 최소 환경부담금 (반올림하여 정수형태)
-    // MST -> 간선 많을듯 -> prim 알고리즘
+    static long min;
+    static long[][] L;
     public static void main(String[] args) throws Exception{
-        T = Integer.parseInt(br.readLine());
-
-        for (int tc = 1; tc <= T; tc++){
+        // E(세율) * L(길이)^2 -> 최소 & N 개의 섬 연결하기
+        TC = Integer.parseInt(br.readLine());
+        for (int tc = 1; tc <= TC; tc++){
             N = Integer.parseInt(br.readLine());
-
-            // 초기화
-            minDist = new long[N];
-            pq.clear();
-
-            X = new int[N];
-            Y = new int[N];
-
-            // 섬 좌표 입력
+            int[][] islands = new int[N][2];
             st = new StringTokenizer(br.readLine());
-            for (int i = 0; i < N; i++){
-                X[i] = Integer.parseInt(st.nextToken());
+            for (int i = 0; i < N ; i++){
+                islands[i][0] = Integer.parseInt(st.nextToken());
             }
             st = new StringTokenizer(br.readLine());
-            for (int i = 0; i < N; i++){
-                Y[i] = Integer.parseInt(st.nextToken());
+            for (int i = 0; i < N ; i++){
+                islands[i][1] = Integer.parseInt(st.nextToken());
             }
-
             E = Double.parseDouble(br.readLine());
 
-            // 모든 간선 거리 계산
+            L = new long[N][N];
             for (int i = 0; i < N; i++){
                 for (int j = i+1; j < N; j++){
-                    int x1 = X[i];
-                    int y1 = Y[i];
-                    int x2 = X[j];
-                    int y2 = Y[j];
+                    if (i == j) continue;
 
-                    double L = getLength(x1, y1, x2, y2);
-                    pq.add(new Edge(i, j, L));
+                    int ax = islands[i][0];
+                    int ay = islands[i][1];
+                    int bx = islands[j][0];
+                    int by = islands[j][1];
+
+                    long dx = ax - bx;
+                    long dy = ay - by;
+                    L[i][j] = L[j][i] = dx*dx + dy*dy;
                 }
             }
 
-            answer = 0;
-            kruskal();
-
-            sb.append("#").append(tc).append(" ").append(Math.round(answer)).append("\n");
+            sb.append("#").append(tc).append(" ").append(Math.round(prim(0)*E)).append("\n");
         }
-
         System.out.println(sb);
     }
 
-    static void kruskal(){
-        makeSet(N);
+    static class Island {
+        int v;
+        long l;
+        public Island(int v, long l){
+            this.v = v;
+            this.l = l;
+        }
+    }
 
-        int cnt = 0;
-        while (cnt < N-1){
-            Edge edge = pq.poll();
+    static long prim(int start) {
+        PriorityQueue<Island> pq = new PriorityQueue<>(Comparator.comparingLong(i -> i.l));
+        boolean[] visit = new boolean[N];
+        pq.add(new Island(start, 0));
 
-            if (findSet(edge.v1) != findSet(edge.v2)){
-                union(edge.v1, edge.v2);
-                cnt++;
-                answer += edge.cost;
+        long sum = 0;
+        while (!pq.isEmpty()) {
+            Island cur = pq.poll();
+            if (visit[cur.v]) continue; // 이미 방문한 정점 처리
+            visit[cur.v] = true;
+            sum += cur.l;
+
+            for (int i = 0; i < N; i++) {
+                if (!visit[i])
+                    pq.add(new Island(i, L[cur.v][i]));
             }
-
         }
-    }
 
-    static void makeSet(int N){
-        p = new int[N];
-        for (int i = 0; i < N; i++){
-            p[i] = i;
-        }
-    }
-
-    static int findSet(int x){
-        if (p[x] == x) return x;
-        return p[x] = findSet(p[x]);
-    }
-
-    static boolean union(int a, int b){
-        int pa = findSet(a);
-        int pb = findSet(b);
-
-        if (pa == pb) return false;
-
-        p[pb] = pa;
-        return true;
-    }
-
-
-    static double getLength(long x1, long y1, long x2, long y2){
-        return Math.pow(Math.abs(x1-x2),2) + Math.pow(Math.abs(y1-y2),2);
-    }
-
-    static class Edge {
-        int v1, v2;
-        double cost;
-
-        public Edge(int from, int to, double length){
-            this.v1 = from;
-            this.v2 = to;
-            this.cost = length * E;
-        }
+        return sum;
     }
 }
