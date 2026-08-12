@@ -1,9 +1,19 @@
 class Solution {
     public boolean solution(String s) {
-        if (s.length() != 4 && s.length() != 6) return false;
+        boolean answer = true;
+        if (!(s.length() == 4 || s.length() == 6)) {
+            answer = false;
+            System.out.println("false");
+        }
         
-        if (!s.matches("^[0-9]*$")) return false;
-        
-        return true;
+        for (char c : s.toCharArray()){
+            System.out.println(c);
+            if (c >= '0' && c <= '9') continue;
+            else {
+                answer = false;
+                break;
+            }
+        }
+        return answer;
     }
 }
